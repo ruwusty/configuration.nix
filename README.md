@@ -1,4 +1,4 @@
 # configuration.nix
 my nixOS configuration file
 
-yes
+add this to your /etc/nixos/
