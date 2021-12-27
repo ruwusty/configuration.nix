@@ -101,6 +101,8 @@ services.xserver.desktopManager = {
     pcmanfm # thunar is still better but pcmanfm is respectable
     discord
     picom
+    grub2_efi
+    ntfs3g
     rofi
     zsh # zsh is superior
     oh-my-zsh # yes
