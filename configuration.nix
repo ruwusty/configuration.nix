@@ -49,22 +49,19 @@ nixpkgs.config.allowUnfree = true;
 # enable gnome displaymanager and add awesome as a desktop environment
 services.xserver.displayManager = {
   gdm.enable = true;
-  defaultSession = "none+awesome";
 };
+
+services.xserver.desktopManager.gnome.enable = true;
 
 #enable awesomewm and install lua packages
-services.xserver.windowManager.awesome = {
-  enable = true;
-    luaModules = with pkgs.luaPackages; [
-      luarocks
-      luadbi-mysql  
-  ];
-};
+# services.xserver.windowManager.awesome-git = {
+#  enable = true;
+ #   luaModules = with pkgs.luaPackages; [
+  #    luarocks
+   #   luadbi-mysql  
+ # ];
+# };
 
-# enable gnome as a fallback bcs awesome is brok rn
-services.xserver.desktopManager = {
-  gnome.enable = true;
-};
 
   # Configure keymap in X11
   services.xserver.layout = "us";
@@ -113,7 +110,6 @@ services.xserver.desktopManager = {
     gparted
     os-prober # why wont u work properly
     etcher
-    awesome # ur still broken L
     pkgs.gnome.gnome-tweaks # needed to make gnome pleasing to look at
     pkgs.gnome.gnome-shell-extensions # needed to make gnome pleasing to look at
     neofetch
