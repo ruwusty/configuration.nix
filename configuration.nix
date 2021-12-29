@@ -6,24 +6,19 @@
 
 {
 
-  # Allow propietary packages or else you cant install shit
-  nixpkgs.config.allowUnfree = true;
+  programs.steam.enable = true;
+
+# Allow propietary packages or else you cant install shit
+nixpkgs.config.allowUnfree = true;
 
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
     ];
 
-# i still cant get grub to detect windows >:c angy moment
-boot.supportedFilesystems = [ "ntfs" ];
-
-boot.loader.systemd-boot.enable = false;
-boot.loader.grub.enable = true;
-boot.loader.grub.version = 2;
-boot.loader.grub.useOSProber = true;
-boot.loader.grub.efiSupport = true;
-boot.loader.grub.device = "/dev/nvme0n1"; 
-
+  # Use the systemd-boot EFI boot loader.
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
 
   networking.hostName = "rusty"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -103,6 +98,7 @@ services.xserver.desktopManager = {
     pcmanfm # thunar is still better but pcmanfm is respectable
     discord
     picom
+    refind
     grub2_efi
     ntfs3g
     rofi
@@ -129,6 +125,11 @@ services.xserver.desktopManager = {
     noto-fonts-emoji
     open-sans
     font-manager
+    steam
+    steam-run-native
+    steam-run
+    proton-caller
+    protontricks
   ];
 
 # set zsh as default shell 
