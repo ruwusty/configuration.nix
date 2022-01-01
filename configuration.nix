@@ -4,9 +4,28 @@
 
 { config, pkgs, ... }:
 
+let
+  nvidia-offload = pkgs.writeShellScriptBin "nvidia-offload" ''
+    export __NV_PRIME_RENDER_OFFLOAD=1
+    export __NV_PRIME_RENDER_OFFLOAD_PROVIDER=NVIDIA-G0
+    export __GLX_VENDOR_LIBRARY_NAME=nvidia
+    export __VK_LAYER_NV_optimus=NVIDIA_only
+    exec -a "$0" "$@"
+  '';
+in
 {
+  services.xserver.videoDrivers = [ "nvidia" ];
+  hardware.nvidia.prime = {
+    offload.enable = true;
 
-  programs.steam.enable = true;
+    # Bus ID of the Intel GPU. You can find it using lspci, either under 3D or VGA
+    intelBusId = "PCI:0:2:0";
+
+    # Bus ID of the NVIDIA GPU. You can find it using lspci, either under 3D or VGA
+    nvidiaBusId = "PCI:1:0:0";
+  };
+
+programs.steam.enable = true;
 
 # Allow propietary packages or else you cant install shit
 nixpkgs.config.allowUnfree = true;
@@ -46,21 +65,22 @@ nixpkgs.config.allowUnfree = true;
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
-# enable gnome displaymanager and add awesome as a desktop environment
 services.xserver.displayManager = {
   gdm.enable = true;
+  defaultSession = "none+awesome";
 };
 
 services.xserver.desktopManager.gnome.enable = true;
 
 #enable awesomewm and install lua packages
-# services.xserver.windowManager.awesome-git = {
-#  enable = true;
- #   luaModules = with pkgs.luaPackages; [
-  #    luarocks
-   #   luadbi-mysql  
- # ];
-# };
+services.xserver.windowManager.awesome = {
+      enable = true;
+      luaModules = with pkgs.luaPackages; [
+        luarocks # is the package manager for Lua modules
+        luadbi-mysql # Database abstraction layer
+      ];
+
+    };
 
 
   # Configure keymap in X11
@@ -86,6 +106,8 @@ services.xserver.desktopManager.gnome.enable = true;
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    awesome
+    nvidia-offload
     vim 
     wget
     firefox
@@ -94,6 +116,9 @@ services.xserver.desktopManager.gnome.enable = true;
     kitty # kitty on top
     pcmanfm # thunar is still better but pcmanfm is respectable
     discord
+    cmake
+    lua5
+    pkgs.luaPackages.lgi
     picom
     refind
     grub2_efi
@@ -105,7 +130,9 @@ services.xserver.desktopManager.gnome.enable = true;
     shutter
     beauty-line-icon-theme # these icons are cool
     sweet
+    playerctl
     spotify
+    spicetify-cli
     git
     gparted
     os-prober # why wont u work properly
@@ -113,12 +140,18 @@ services.xserver.desktopManager.gnome.enable = true;
     pkgs.gnome.gnome-tweaks # needed to make gnome pleasing to look at
     pkgs.gnome.gnome-shell-extensions # needed to make gnome pleasing to look at
     neofetch
+    busybox
+    toybox
+    pciutils
     orchis
     orchis-theme
     noto-fonts
     noto-fonts-extra
     noto-fonts-cjk
     noto-fonts-emoji
+    nerdfonts
+    roboto
+    fira-mono
     open-sans
     font-manager
     steam
@@ -126,7 +159,12 @@ services.xserver.desktopManager.gnome.enable = true;
     steam-run
     proton-caller
     protontricks
+    brightnessctl
+    pamixer
+    xdotool
+    imagemagick
   ];
+
 
 # set zsh as default shell 
 programs.zsh.enable = true;
@@ -140,14 +178,6 @@ services.picom = {
   shadow = true;
   fadeDelta = 4;
 };
-
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  programs.mtr.enable = true;
-  programs.gnupg.agent = {
-    enable = true;
-    enableSSHSupport = true;
-  };
 
   # List services that you want to enable:
 
@@ -169,4 +199,3 @@ services.picom = {
   system.stateVersion = "21.11"; # Did you read the comment?
 
 }
-
