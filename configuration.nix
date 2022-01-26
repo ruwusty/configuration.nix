@@ -61,9 +61,9 @@ services.xserver.windowManager.awesome = {
       luaModules = with pkgs.luaPackages; [
         luarocks # is the package manager for Lua modules
         luadbi-mysql # Database abstraction layer
-      ];
+     ];
 
-    };
+   };
 
 
   # Configure keymap in X11
@@ -103,6 +103,8 @@ services.xserver.windowManager.awesome = {
     pkgs.luaPackages.lgi
     picom
     refind
+    glava
+    feh
     grub2_efi
     ntfs3g
     rofi
@@ -123,6 +125,7 @@ services.xserver.windowManager.awesome = {
     pkgs.gnome.gnome-shell-extensions # needed to make gnome pleasing to look at
     neofetch
     busybox
+    i3lock
     toybox
     pciutils
     orchis
